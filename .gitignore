@@ -28,8 +28,6 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
 
@@ -82,21 +80,15 @@ ipython_config.py
 # pyenv
 .python-version
 
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don’t work, or not
-#   install all needed dependencies.
-#Pipfile.lock
-
 # celery beat schedule file
 celerybeat-schedule
 
 # SageMath parsed files
 *.sage.py
 
-# Environments
+# Environments and Secrets
 .env
+.env.*
 .venv
 env/
 venv/
@@ -122,14 +114,29 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Azure Functions artifacts
-bin
-obj
+# Azure Functions & Core Tools artifacts
+bin/
+obj/
 appsettings.json
 local.settings.json
+local.settings*.json
+.azurefunctions/
+.funcpack/
+.python_packages/
+*.PublishSettings
 
-# Azurite artifacts
-__blobstorage__
-__queuestorage__
+# Azurite artifacts (emulador local de storage)
+__blobstorage__/
+__queuestorage__/
+__tablestorage__/
 __azurite_db*__.json
-.python_packages
+__azurite_db*__
+
+# IDE / Editor (VS Code)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+*.code-workspace
