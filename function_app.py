@@ -71,3 +71,16 @@ def timer_trigger_chama_http(callTimer: func.TimerRequest) -> None:
             logging.info(f"Resposta da http_trigger_v3: {resposta}")
     except Exception as e:
         logging.error(f"Erro ao chamar a http_trigger_v3: {e}")
+
+@app.timer_trigger(schedule="0 * * * * *", arg_name="myTimer", run_on_startup=False,
+              use_monitor=False) 
+def timer_trigger(myTimer: func.TimerRequest) -> None:
+    usuario = os.getenv("USER")
+    banco_dados = os.getenv("DATABASE")
+    senha = os.getenv("PASSWORD")
+    servidor = os.getenv("HOST")
+
+    logging.info(usuario)
+    logging.error(banco_dados)
+    logging.info(senha)
+    print(servidor)
