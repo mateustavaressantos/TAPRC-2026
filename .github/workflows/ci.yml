@@ -14,16 +14,16 @@ jobs:
 
       # Instalação das dependências de validação (ruff, black e isort)
       - name: Instalar ferramentas de lint e formatação
-      - run: pip install ruff black isort
+        run: pip install ruff black isort
 
       # 1. VERIFICAÇÃO DE IMPORTS: isort
       - name: Verificação de imports (isort)
-      - run: isort --check-only --profile black .
+        run: isort --check-only --profile black .
 
       # 2. FORMATAÇÃO AUTOMÁTICA: black
       - name: Formatação automática (Black)
-      - run: black --check .
+        run: black --check .
 
       # 3. LINTING: ruff
       - name: Linting e padrões PEP8 (Ruff)
-      - run: ruff check .
+        run: ruff check .
