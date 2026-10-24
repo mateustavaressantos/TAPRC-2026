@@ -2,10 +2,10 @@ import csv
 import io
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-import pyodbc
 import azure.functions as func
+import pyodbc
 from azure.storage.filedatalake import DataLakeServiceClient
 
 app = func.FunctionApp()
@@ -50,7 +50,7 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
             rows = cursor.fetchall()
             columns = [col[0] for col in cursor.description]
 
-            logging.info(f'{len(rows)} linhas lidas de itsm.chamado')
+            logger.info(f'{len(rows)} linhas lidas de itsm.chamado')
 
         # Cria um buffer de memória para armazenar os dados CSV
         buffer = io.StringIO()
@@ -62,7 +62,7 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
         writer.writerows(rows)
 
         # Grava o arquivo no contêiner bronze do Data Lake, particionado por data
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         file_path = f"chamado/{now:%Y/%m/%d}/chamado_{now:%Y%m%d_%H%M%S}.csv"
 
         #itsm/chamado/year=2024/month=06/day=05/chamado_20240605_123456.csv
@@ -75,10 +75,10 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
         # Grava os dados do buffer no arquivo do Data Lake, sobrescrevendo se já existir
         file_client.upload_data(buffer.getvalue().encode("utf-8"), overwrite=True)
 
-        logging.info(f'Arquivo gravado em bronze/{file_path}')
+        logger.info(f'Arquivo gravado em bronze/{file_path}')
 
     except Exception as e:
-        logging.error(f"Erro ao ler itsm.chamado: {str(e)}")
+        logger.error(f"Erro ao ler itsm.chamado: {e!s}")
         raise
 
 # Chamado_sla
