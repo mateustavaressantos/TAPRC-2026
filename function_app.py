@@ -64,7 +64,7 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
 
         # Grava o arquivo no contêiner bronze do Data Lake, particionado por data
         now = datetime.now(UTC)
-        file_path = f"chamado/{now:%Y/%m/%d}/chamado_{now:%Y%m%d_%H%M%S}.csv"
+        file_path = f"itsm/chamado/{now:%Y/%m/%d}/chamado_{now:%Y%m%d_%H%M%S}.csv"
 
         # itsm/chamado/year=2024/month=06/day=05/chamado_20240605_123456.csv
         # file_path = f"itsm/chamado/year={now:%Y}/month={now:%m}/day={now:%d}/chamado_{now:%Y%m%d_%H%M%S}.csv"
