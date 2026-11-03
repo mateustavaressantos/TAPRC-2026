@@ -66,7 +66,7 @@ def extract_table_to_datalake(schema: str, table_name: str) -> None:
         raise
 
 
-SCHEDULE_TIME = "0 45 20 * * *"
+SCHEDULE_TIME = "0 55 23 * * *"
 
 
 @app.timer_trigger(
