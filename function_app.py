@@ -35,15 +35,12 @@ def load_datalake_to_sql(schema: str, table_name: str) -> None:
     )
 
     try:
-        # 2. Localizar o arquivo do dia atual no Data Lake
         now = datetime.now(UTC)
-        # Caminho baseado na estrutura da imagem: bronze/itsm/analista/YYYY/MM/DD/
         folder_path = f"{schema}/{table_name}/{now:%Y/%m/%d}/"
 
         datalake = DataLakeServiceClient.from_connection_string(datalake_conn_str)
         file_system_client = datalake.get_file_system_client("bronze")
 
-        # Busca todos os arquivos dentro da pasta do dia atual
         paths = file_system_client.get_paths(path=folder_path)
         file_paths = [p.name for p in paths if not p.is_directory]
 
@@ -51,47 +48,38 @@ def load_datalake_to_sql(schema: str, table_name: str) -> None:
             logger.info(f"Nenhum arquivo CSV encontrado em bronze/{folder_path}")
             return
 
-        # Pega o arquivo mais recente pela ordem alfabética do timestamp no nome
         latest_file_path = max(file_paths)
         logger.info(f"Iniciando leitura do arquivo: {latest_file_path}")
 
-        # 3. Baixar e ler o CSV para a memória
         file_client = file_system_client.get_file_client(latest_file_path)
-        csv_bytes = file_client.download_data().readall()
+        csv_bytes = file_client.download_file().readall()
         csv_string = csv_bytes.decode("utf-8")
 
         csv_reader = csv.reader(io.StringIO(csv_string))
-        columns = next(csv_reader)  # Pega a primeira linha (cabeçalhos)
-        rows = [row for row in csv_reader]  # Pega o restante dos dados
+        columns = next(csv_reader)
+        rows = [row for row in csv_reader]
 
         if not rows:
             logger.info("O arquivo CSV está vazio (apenas cabeçalho).")
             return
 
-        # 4. Montar a query dinâmica de INSERT
-        # Transforma a lista de colunas em string: "col1, col2, col3"
         col_names = ", ".join(columns)
-        # Cria as interrogações para a parametrização: "?, ?, ?"
         placeholders = ", ".join(["?"] * len(columns))
 
         query = (
             f"INSERT INTO {schema}.{table_name} ({col_names}) VALUES ({placeholders})"
         )
 
-        # 5. Conectar ao banco e executar a inserção em massa (Bulk Insert)
         with pyodbc.connect(sql_conn_str) as conn:
             cursor = conn.cursor()
 
-            # Habilita a inserção manual de IDs (ignora erro se a tabela não tiver IDENTITY)
             try:
                 cursor.execute(f"SET IDENTITY_INSERT {schema}.{table_name} ON")
             except pyodbc.Error:
                 pass
 
-            # executemany é otimizado para inserir milhares de linhas rapidamente
             cursor.executemany(query, rows)
 
-            # Desabilita a inserção manual de IDs
             try:
                 cursor.execute(f"SET IDENTITY_INSERT {schema}.{table_name} OFF")
             except pyodbc.Error:
