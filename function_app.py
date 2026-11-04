@@ -244,7 +244,7 @@ def extract_solicitante(myTimer: func.TimerRequest) -> None:
 
 
 @app.timer_trigger(
-    schedule="0 10 0 * * *", arg_name="myTimer", run_on_startup=False, use_monitor=False
+    schedule="0 25 0 * * *", arg_name="myTimer", run_on_startup=False, use_monitor=False
 )
 def load_analista(myTimer: func.TimerRequest) -> None:
     # Lê o CSV da bronze e insere no banco SQL
