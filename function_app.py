@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 
 import azure.functions as func
 import pyodbc
+from azure.core.exceptions import AzureError
 from azure.storage.filedatalake import DataLakeServiceClient
 
 app = func.FunctionApp()
@@ -244,8 +245,32 @@ def extract_solicitante(myTimer: func.TimerRequest) -> None:
 
 
 @app.timer_trigger(
-    schedule="0 25 0 * * *", arg_name="myTimer", run_on_startup=False, use_monitor=False
+    schedule="0 45 0 * * *", arg_name="myTimer", run_on_startup=False, use_monitor=False
 )
-def load_analista(myTimer: func.TimerRequest) -> None:
-    # Lê o CSV da bronze e insere no banco SQL
-    load_datalake_to_sql("itsm", "analista")
+def load_all_bronze_to_sql(myTimer: func.TimerRequest) -> None:
+    tabelas_ordenadas = [
+        "categoria",
+        "cliente_organizacao",
+        "fila",
+        "sla",
+        "analista",
+        "solicitante",
+        "chamado",
+        "chamado_sla",
+        "chamado_status_historico",
+        "csat_avaliacao",
+    ]
+
+    logger.info(
+        "A iniciar o carregamento em massa (Bulk Insert) do Data Lake para o SQL..."
+    )
+
+    for tabela in tabelas_ordenadas:
+        try:
+            logger.info(f"A processar tabela: itsm.{tabela}")
+            load_datalake_to_sql("itsm", tabela)
+
+        except (pyodbc.Error, AzureError, ValueError) as e:
+            logger.error(f"Falha ao carregar a tabela itsm.{tabela}: {e!s}")
+
+    logger.info("Carregamento em massa concluído!")
