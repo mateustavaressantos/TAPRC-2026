@@ -324,13 +324,6 @@ def extract_categoria(myTimer: func.TimerRequest) -> None:
 @app.timer_trigger(
     schedule=SCHEDULE_TIME, arg_name="myTimer", run_on_startup=False, use_monitor=False
 )
-def extract_csat(myTimer: func.TimerRequest) -> None:
-    extract_table_to_datalake("itsm", "csat")
-
-
-@app.timer_trigger(
-    schedule=SCHEDULE_TIME, arg_name="myTimer", run_on_startup=False, use_monitor=False
-)
 def extract_csat_avaliacao(myTimer: func.TimerRequest) -> None:
     extract_table_to_datalake("itsm", "csat_avaliacao")
 
@@ -355,12 +348,6 @@ def extract_sla(myTimer: func.TimerRequest) -> None:
 def extract_solicitante(myTimer: func.TimerRequest) -> None:
     extract_table_to_datalake("itsm", "solicitante")
 
-@app.timer_trigger(
-    schedule=SCHEDULE_TIME, arg_name="myTimer", run_on_startup=False, use_monitor=False
-)
-def extract_csat(myTimer: func.TimerRequest) -> None:
-    extract_table_to_datalake("itsm", "csat")
-
 
 @app.timer_trigger(
     schedule="0 35 22 * * *",
@@ -380,7 +367,6 @@ def load_all_bronze_to_sql(myTimer: func.TimerRequest) -> None:
         "chamado",
         "chamado_sla",
         "chamado_status_historico",
-        "csat",
         "csat_avaliacao",
     ]
 
