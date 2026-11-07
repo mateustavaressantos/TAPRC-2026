@@ -348,7 +348,7 @@ def extract_solicitante(myTimer: func.TimerRequest) -> None:
 
 
 @app.timer_trigger(
-    schedule="0 42 0 * * *",
+    schedule="0 48 0 * * *",
     arg_name="myTimer",
     run_on_startup=False,
     use_monitor=False,
