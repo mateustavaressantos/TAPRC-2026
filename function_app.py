@@ -274,7 +274,7 @@ def extract_table_to_datalake(schema: str, table_name: str) -> None:
         raise
 
 
-SCHEDULE_TIME = "0 30 22 * * *"
+SCHEDULE_TIME = "0 45 0 * * *"
 
 
 @app.timer_trigger(
@@ -348,7 +348,7 @@ def extract_solicitante(myTimer: func.TimerRequest) -> None:
 
 
 @app.timer_trigger(
-    schedule="0 35 22 * * *",
+    schedule="0 42 0 * * *",
     arg_name="myTimer",
     run_on_startup=False,
     use_monitor=False,
